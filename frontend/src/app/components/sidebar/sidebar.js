@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Box, Grid } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Grid, useMediaQuery } from '@mui/material';
 import SidebarActions from './sidebar_action';
 import ChatLog from './chatlog/chat_log';
 
@@ -10,8 +10,20 @@ const Sidebar = ({ onSelectConversation }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [conversations, setConversations] = useState([]);
 
+  // Media query to detect narrow screens
+  const isNarrowScreen = useMediaQuery('(max-width: 768px)');
+
+  // Auto-collapse the sidebar when the screen is narrow
+  useEffect(() => {
+    if (isNarrowScreen) {
+        setIsOpen(false); // Collapse the sidebar when the screen is narrow
+    } else {
+        setIsOpen(true); // Expand the sidebar when the screen is wide
+    }
+  }, [isNarrowScreen]);
+
   // Function to toggle sidebar open or closed
-  const toggleSidebar = () => {
+  const handleToggleSidebar = () => {
     setIsOpen(!isOpen); // Toggle value of isOpen between true and false when clicked
   };
 
@@ -30,24 +42,20 @@ const Sidebar = ({ onSelectConversation }) => {
   return (
     <Box
       sx={{
-        display: 'flex',  // Flexbox layout to stack child elements vertically
-        flexDirection: 'column',  // Stack children vertically
-        height: '100vh',  // Make the sidebar take up the full height of the viewport
-        width: isOpen ? '15%' : '5%',  // Adjust the width based on whether the sidebar is open or collapsed
-        backgroundColor: '#333',  // Set the background color to dark gray
-        color: 'white',  // Set the text color to white
-        transition: 'width 0.3s ease',  // Smooth transition when changing the width
-        position: 'fixed',  // Fix the sidebar to the left side of the screen
-        top: 0,  // Align the sidebar with the top of the viewport
-        left: 0,  // Align the sidebar with the left edge of the viewport
-        zIndex: 2,  // Ensure the sidebar is above other elements
-        overflow: 'hidden',  // Hide any overflowing content
+        width: isOpen ? '261px' : '60px', // Sidebar is 261px when open, 60px when closed
+        transition: 'width 0.1s', // Time it takes for the sidebar to collapse/uncollapse
+        overflow: 'hidden', 
+        backgroundColor: '#333', 
+        borderRight: '1px solid #ddd', 
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh', // Full height of the viewport
       }}
     >
       {/* SidebarActions contains the logo, collapse button, and new chat button */}
       <SidebarActions
         isOpen={isOpen} // Pass the isOpen state to control the appearance of the sidebar actions
-        toggleSidebar={toggleSidebar}  // Pass the toggleSidebar function to control collapsing/expanding
+        toggleSidebar={handleToggleSidebar}  // Pass the toggleSidebar function to control collapsing/expanding
         handleNewChat={handleNewChat}  // Pass the handleNewChat function to add new conversations
       />
 
