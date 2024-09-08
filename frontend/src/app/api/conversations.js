@@ -2,7 +2,8 @@
 
 const API_BASE_URL = 'http://127.0.0.1:8000/api/';
 
-
+//changed page routing definitions 
+//and way we look up convo data (changed from python to js)
 // Function to get data from an endpoint
 export async function fetchData(endpoint) {
   try {
