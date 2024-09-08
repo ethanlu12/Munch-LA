@@ -1,47 +1,106 @@
-import { openDb } from '../../lib/db'; // Adjust this to your actual db path
+// src/app/components/api/api.js
 
-export async function POST(req) {
-    try {
-      const { user_id, session_id } = await req.json();
-  
-      if (!user_id || !session_id) {
-        return new Response(JSON.stringify({ error: 'Missing user_id or session_id' }), { status: 400 });
-      }
-  
-      // Open SQLite database
-      const db = await openDb();
-  
-      // Query database for messages matching the user_id and session_id
-      const dbMessages = await db.all(
-        'SELECT * FROM messages WHERE session_id = ? AND user_id = ? ORDER BY timestamp ASC',
-        session_id,
-        user_id
-      );
-  
-      // Process messages
-      let firstNonPromptHumanMessageSeen = false;
-      const messages = [];
-  
-      dbMessages.forEach((dbMessage) => {
-        if (dbMessage.message_type === 'humanmessage_no_prompt') {
-          messages.push({
-            message_type: 'human_no_prompt',
-            content: dbMessage.content,
-          });
-          firstNonPromptHumanMessageSeen = true;
-        } else if (dbMessage.message_type === 'aimessage' && firstNonPromptHumanMessageSeen) {
-          messages.push({
-            message_type: 'aimessage',
-            content: dbMessage.content,
-          });
-        }
-      });
-  
-      // Return the processed conversation
-      return new Response(JSON.stringify({ conversation: messages }), { status: 200 });
-    } catch (error) {
-      console.error('Error fetching conversation data:', error);
-      return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
+const API_BASE_URL = 'http://127.0.0.1:8000/api/';
+
+
+// Function to get data from an endpoint
+export async function fetchData(endpoint) {
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
+    const responseData = await response.json();
+    console.log('AI Response from fetchData:', responseData);  // Log the response from ChatGPT
+    return responseData;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
   }
-  
+}
+
+// Function to post data to an endpoint
+export async function postData(endpoint, data) {
+    console.log('data: ', data);
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const responseData = await response.json();
+    console.log('postData:', responseData);  // Log the response from ChatGPT
+    return responseData;
+  } catch (error) {
+    console.error('Error posting data:', error);
+    throw error;
+  }
+}
+
+// Function to post data to an endpoint
+export async function getSessions(endpoint, user_id) {
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user_id), // Ensure payload is correctly formatted
+    });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const responseData = await response.json();
+      return responseData;
+  } catch (error) {
+    console.error('Error posting data:', error);
+    throw error;
+  }
+}
+
+// Function to post data to an endpoint
+export async function getConversation(endpoint, payload) {
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const responseData = await response.json();
+      return responseData;
+  } catch (error) {
+    console.error('Error posting data:', error);
+    throw error;
+  }
+}
+
+// Function to post data to an endpoint
+export async function getNewSession(endpoint, payload) {
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload), 
+    });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const responseData = await response.json();
+      return responseData;
+  } catch (error) {
+    console.error('Error posting data:', error);
+    throw error;
+  }
+}
