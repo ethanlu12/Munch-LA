@@ -1,4 +1,4 @@
-# Munch - Los Angeles
+# Munch - Los Angeles LA
 
 A chatbot designed to help users find food options in the Los Angeles area. This project leverages natural language processing (NLP) to understand user queries and integrates with various APIs to provide real-time information about restaurants, food types, and locations.
 
